@@ -90,16 +90,33 @@ async def get_sources(
     else:
         url = f"{TORRENTIO_BASE}/stream/movie/{imdbId}.json"
 
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept": "application/json,text/plain,*/*",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
     logger.info("Torrentio fetch: %s", url)
     try:
-        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+        async with httpx.AsyncClient(
+            timeout=30.0,
+            follow_redirects=True,
+            headers=headers,
+        ) as client:
             resp = await client.get(url)
     except httpx.HTTPError as e:
         logger.warning("Torrentio fetch failed: %s", e)
         return JSONResponse({"streams": []})
 
     if resp.status_code != 200:
-        logger.warning("Torrentio returned HTTP %s", resp.status_code)
+        logger.warning(
+            "Torrentio returned HTTP %s, body: %s",
+            resp.status_code,
+            resp.text[:200],
+        )
         return JSONResponse({"streams": []})
 
     return JSONResponse(resp.json())
