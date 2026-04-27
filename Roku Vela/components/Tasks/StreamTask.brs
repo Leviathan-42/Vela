@@ -5,7 +5,7 @@ end sub
 
 sub execute()
     proxyUrl = m.top.proxyUrl
-    if proxyUrl = "" then proxyUrl = "http://192.168.1.100:8000"
+    if proxyUrl = "" then proxyUrl = "http://192.168.7.114:8000"
 
     url = proxyUrl + "/stream"
 
