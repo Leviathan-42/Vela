@@ -28,9 +28,11 @@ sub execute()
         if s.infoHash = invalid then continue for
 
         src = {}
-        src.id = s.infoHash + ":" + (s.fileIdx ?? 0).toStr()
+        fi = 0
+        if s.fileIdx <> invalid then fi = s.fileIdx
+        src.id = s.infoHash + ":" + fi.toStr()
         src.infoHash = s.infoHash
-        src.fileIndex = s.fileIdx ?? 0
+        if s.fileIdx <> invalid then src.fileIndex = s.fileIdx else src.fileIndex = 0
 
         ' Build display name from title or name
         name = s.title

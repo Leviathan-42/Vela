@@ -52,7 +52,7 @@ sub onStateChanged()
     end if
 end sub
 
-sub saveProgress()
+sub doSaveProgress()
     if m.video.position > 0 and m.video.duration > 0
         SaveProgress(buildMediaKey(), m.video.position, m.video.duration)
     end if
@@ -68,7 +68,7 @@ end function
 
 function onKeyEvent(key as String, press as Boolean) as Boolean
     if press and key = "back"
-        saveProgress()
+        doSaveProgress()
         if m.positionTimer <> invalid
             m.positionTimer.control = "stop"
         end if

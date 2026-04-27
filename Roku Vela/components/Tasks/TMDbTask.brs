@@ -9,7 +9,7 @@ sub execute()
 
     if apiKey = ""
         ' Fallback / placeholder — in production load from registry
-        apiKey = "YOUR_TMDB_API_KEY"
+        apiKey = "1330fb5d167bfc239614afd096e1fff2"
     end if
 
     url = "https://api.themoviedb.org/3" + endpoint + "?api_key=" + apiKey
