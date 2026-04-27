@@ -24,9 +24,9 @@
             focusRow="0"
             itemSpacing="[20,20]" />
         
-        <LoadingIndicator
+        <BusySpinner
             id="loading"
             translation="[640,360]"
-            visible="false" />
+            control="none" />
     </children>
 </component>

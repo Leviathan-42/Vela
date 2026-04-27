@@ -10,7 +10,7 @@
     </interface>
     <children>
         <Label id="header" translation="[80,40]" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" />
-        <LoadingIndicator id="loading" translation="[960,540]" visible="true" />
+        <BusySpinner id="loading" translation="[960,540]" control="start" />
         <LabelList id="sourceList" translation="[80,120]" itemSize="[1760,80]" numColumns="1" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
     </children>
 </component>

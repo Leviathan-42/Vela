@@ -61,7 +61,7 @@ sub onItemSelected()
 end sub
 
 sub fetchTrendingMovies()
-    m.loading.visible = true
+    m.loading.control = "start"
     task = CreateObject("roSGNode", "TMDbTask")
     task.endpoint = "/trending/movie/day"
     task.observeField("response", "onContentLoaded")
@@ -69,7 +69,7 @@ sub fetchTrendingMovies()
 end sub
 
 sub fetchTrendingShows()
-    m.loading.visible = true
+    m.loading.control = "start"
     task = CreateObject("roSGNode", "TMDbTask")
     task.endpoint = "/trending/tv/day"
     task.observeField("response", "onContentLoaded")
@@ -77,7 +77,7 @@ sub fetchTrendingShows()
 end sub
 
 sub fetchPopularMovies()
-    m.loading.visible = true
+    m.loading.control = "start"
     task = CreateObject("roSGNode", "TMDbTask")
     task.endpoint = "/movie/popular"
     task.observeField("response", "onContentLoaded")
@@ -85,7 +85,7 @@ sub fetchPopularMovies()
 end sub
 
 sub fetchPopularShows()
-    m.loading.visible = true
+    m.loading.control = "start"
     task = CreateObject("roSGNode", "TMDbTask")
     task.endpoint = "/tv/popular"
     task.observeField("response", "onContentLoaded")
@@ -93,19 +93,19 @@ sub fetchPopularShows()
 end sub
 
 sub loadContinueWatching()
-    m.loading.visible = true
+    m.loading.control = "start"
     ' Build from registry progress entries
     gridContent = CreateObject("roSGNode", "ContentNode")
     ' TODO: iterate registry keys starting with progress_
     m.contentGrid.content = gridContent
-    m.loading.visible = false
+    m.loading.control = "stop"
 end sub
 
 sub loadWatchlist()
-    m.loading.visible = true
+    m.loading.control = "start"
     watchlistIds = GetWatchlist()
     if watchlistIds.count() = 0
-        m.loading.visible = false
+        m.loading.control = "stop"
         m.contentGrid.content = CreateObject("roSGNode", "ContentNode")
         return
     end if
@@ -118,11 +118,11 @@ sub loadWatchlist()
         task.control = "RUN"
     end for
     m.contentGrid.content = gridContent
-    m.loading.visible = false
+    m.loading.control = "stop"
 end sub
 
 sub onContentLoaded(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     task = event.getRoSGNode()
     response = task.response
     if response = invalid or response.results = invalid then return

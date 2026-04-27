@@ -20,9 +20,9 @@
             numColumns="6"
             numRows="2"
             itemSpacing="[20,20]" />
-        <LoadingIndicator
+        <BusySpinner
             id="loading"
             translation="[960,540]"
-            visible="false" />
+            control="none" />
     </children>
 </component>

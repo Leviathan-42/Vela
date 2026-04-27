@@ -14,7 +14,7 @@ sub onMediaItemReady()
 end sub
 
 sub fetchSources()
-    m.loading.visible = true
+    m.loading.control = "start"
     task = CreateObject("roSGNode", "TorrentioTask")
     task.imdbId = m.top.mediaItem.imdbId
     task.mediaType = m.top.mediaItem.mediaType
@@ -25,7 +25,7 @@ sub fetchSources()
 end sub
 
 sub onSourcesLoaded(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     task = event.getRoSGNode()
     sources = task.sources
     if sources = invalid or sources.count() = 0
@@ -70,7 +70,7 @@ sub onSourceSelected()
 end sub
 
 sub playSource(src as Object)
-    m.loading.visible = true
+    m.loading.control = "start"
     m.header.text = "Resolving..."
 
     task = CreateObject("roSGNode", "RDResolveTask")
@@ -82,7 +82,7 @@ sub playSource(src as Object)
 end sub
 
 sub onResolved(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     task = event.getRoSGNode()
     result = task.result
     if result = invalid or result.url = invalid
@@ -100,12 +100,12 @@ sub onResolved(event)
 end sub
 
 sub onResolveError(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     m.header.text = "Real-Debrid error: " + event.getData()
 end sub
 
 sub onManifestReady(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     manifestUrl = event.getData()
     args = {
         manifestUrl: manifestUrl,
@@ -120,7 +120,7 @@ sub onManifestReady(event)
 end sub
 
 sub onProxyError(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     m.header.text = "Proxy error: " + event.getData()
 end sub
 

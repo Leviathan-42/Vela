@@ -13,7 +13,7 @@ sub onSearchTextChanged()
     text = m.keyboard.textEditBox.text
     if text.len() < 3 then return
 
-    m.loading.visible = true
+    m.loading.control = "start"
     if m.searchTask <> invalid then m.searchTask.control = "STOP"
 
     m.searchTask = CreateObject("roSGNode", "TMDbTask")
@@ -23,7 +23,7 @@ sub onSearchTextChanged()
 end sub
 
 sub onResultsLoaded(event)
-    m.loading.visible = false
+    m.loading.control = "stop"
     task = event.getRoSGNode()
     response = task.response
     if response = invalid or response.results = invalid then return
