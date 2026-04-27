@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="MainScene" extends="Scene">
+    <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+    <children>
+        <Overhang
+            id="overhang"
+            title="Vela"
+            showOptions="true"
+            showClock="true"
+            color="0x1a1a1aff" />
+        
+        <PanelSet
+            id="panelSet"
+            translation="[0,80]" />
+    </children>
+</component>

@@ -1,0 +1,22 @@
+title=Vela
+major_version=1
+minor_version=0
+build_version=0
+
+# Channel IDs (replace with your Roku developer credentials)
+id=dev
+mm_icon_focus_hd=pkg:/images/icon_focus_hd.png
+mm_icon_focus_sd=pkg:/images/icon_focus_sd.png
+
+# Splash screen
+splash_screen_hd=pkg:/images/splash_hd.png
+splash_screen_sd=pkg:/images/splash_sd.png
+splash_color=#0a0a0a
+splash_min_time=1500
+
+# UI resolution
+ui_res=fhd
+
+# Required capabilities
+supports_input_launch=1
+confirm_partnerbutton=1

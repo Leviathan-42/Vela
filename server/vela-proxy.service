@@ -1,0 +1,17 @@
+[Unit]
+Description=Vela Proxy Server
+After=network.target
+
+[Service]
+Type=simple
+User=vela
+WorkingDirectory=/opt/vela-proxy
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="HOST=0.0.0.0"
+Environment="PORT=8000"
+ExecStart=/opt/vela-proxy/.venv/bin/uvicorn vela_proxy.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

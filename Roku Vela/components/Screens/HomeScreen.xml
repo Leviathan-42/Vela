@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="HomeScreen" extends="Group">
+    <script type="text/brightscript" uri="pkg:/components/Screens/HomeScreen.brs" />
+    <interface>
+        <field id="content" type="node" />
+    </interface>
+    <children>
+        <LabelList
+            id="menuList"
+            translation="[80,40]"
+            itemSize="[300,60]"
+            focusFootprintBlendColor="0x333333ff"
+            focusBlendColor="0xFF6B35ff"
+            color="0xFFFFFFFF"
+            numColumns="1" />
+        
+        <PosterGrid
+            id="contentGrid"
+            translation="[420,40]"
+            itemSize="[240,360]"
+            numColumns="4"
+            numRows="3"
+            focusColumn="0"
+            focusRow="0"
+            itemSpacing="[20,20]" />
+        
+        <LoadingIndicator
+            id="loading"
+            translation="[640,360]"
+            visible="false" />
+    </children>
+</component>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="TMDbTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/components/Tasks/TMDbTask.brs" />
+    <interface>
+        <field id="endpoint" type="string" />
+        <field id="response" type="assocarray" />
+    </interface>
+</component>
