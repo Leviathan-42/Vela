@@ -6,18 +6,34 @@
         <field id="mediaItem" type="assocarray" />
     </interface>
     <children>
-        <Poster id="backdrop" width="1920" height="1080" loadSync="false" />
-        <Rectangle width="1920" height="1080" color="0x00000088" translation="[0,0]" />
-        <Poster id="poster" translation="[80,200]" width="300" height="450" />
-        <Label id="titleLabel" translation="[420,220]" width="1400" height="80" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" wrap="false" />
-        <Label id="metaLabel" translation="[420,310]" width="1400" height="40" color="0xAAAAAAFF" font="font:SmallSystemFont" />
-        <Label id="overviewLabel" translation="[420,370]" width="1400" height="200" color="0xCCCCCCFF" font="font:SmallSystemFont" wrap="true" numLines="6" />
-        <ButtonGroup id="buttonGroup" translation="[420,600]" layoutDirection="horiz" itemSpacings="[30]">
-            <Button id="playButton" text="▶ Play" minWidth="200" />
+        <Poster id="backdrop" width="1680" height="1080" loadSync="false" />
+        <Rectangle width="1680" height="1080" color="0x0a0a0acc" translation="[0,0]" />
+        <Poster id="poster" translation="[40,160]" width="280" height="420" />
+        <Label id="titleLabel" translation="[360,180]" width="1280" height="80" color="0xFFFFFFff" wrap="false" font="font:LargeBoldSystemFont" />
+        <Label id="metaLabel" translation="[360,270]" width="1280" height="36" color="0xAAAAAAff" font="font:SmallSystemFont" />
+        <Label id="overviewLabel" translation="[360,320]" width="1280" height="220" color="0xCCCCCCff" wrap="true" numLines="6" font="font:SmallSystemFont" />
+        <ButtonGroup id="buttonGroup" translation="[360,560]" layoutDirection="horiz" itemSpacings="[20]">
+            <Button id="playButton" text="Play" minWidth="200" />
             <Button id="sourceButton" text="Sources" minWidth="200" />
-            <Button id="watchlistButton" text="+ Watchlist" minWidth="250" />
+            <Button id="watchlistButton" text="+ Watchlist" minWidth="240" />
         </ButtonGroup>
-        <LabelList id="seasonList" translation="[420,700]" itemSize="[120,60]" numColumns="1" layoutDirection="horiz" visible="false" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
-        <LabelList id="episodeList" translation="[420,780]" itemSize="[800,60]" numColumns="1" visible="false" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
+        <LabelList
+            id="seasonList"
+            translation="[360,680]"
+            itemSize="[160,60]"
+            color="0xCCCCCCff"
+            focusedColor="0x3B82F6ff"
+            drawFocusFeedback="true"
+            font="font:SmallSystemFont"
+            visible="false" />
+        <LabelList
+            id="episodeList"
+            translation="[540,680]"
+            itemSize="[1080,60]"
+            color="0xCCCCCCff"
+            focusedColor="0x3B82F6ff"
+            drawFocusFeedback="true"
+            font="font:SmallSystemFont"
+            visible="false" />
     </children>
 </component>

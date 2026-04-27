@@ -70,9 +70,14 @@ end sub
 
 sub onTokensReceived(event)
     tokens = event.getData()
-    SaveRDToken(tokens.access_token, tokens.refresh_token, tokens.expires_in)
+    if tokens = invalid or tokens.access_token = invalid then return
+    refresh = tokens.refresh_token
+    if refresh = invalid then refresh = ""
+    expires = tokens.expires_in
+    if expires = invalid then expires = 2592000
+    SaveRDToken(tokens.access_token, refresh, expires)
     refreshMenu()
-    m.statusLabel.text = "Real-Debrid connected!"
+    m.statusLabel.text = "Real-Debrid connected."
 end sub
 
 sub onAuthError(event)
@@ -80,17 +85,14 @@ sub onAuthError(event)
 end sub
 
 sub checkProxy()
-    m.statusLabel.text = "Checking proxy..."
-    task = CreateObject("roSGNode", "TMDbTask")
-    task.endpoint = ""  ' reusing TMDbTask for a simple HTTP ping would be weird
-    ' Just do a raw ping via another task or url transfer
+    m.statusLabel.text = "Checking proxy at 192.168.7.114:8000..."
     request = CreateObject("roUrlTransfer")
     request.setUrl("http://192.168.7.114:8000/health")
     request.setCertificatesFile("common:/certs/ca-bundle.crt")
     request.initClientCertificates()
     response = request.getToString()
-    if response <> ""
-        m.statusLabel.text = "Proxy reachable: " + response
+    if response <> invalid and response <> ""
+        m.statusLabel.text = "Proxy reachable. Response: " + response
     else
         m.statusLabel.text = "Proxy unreachable at 192.168.7.114:8000"
     end if

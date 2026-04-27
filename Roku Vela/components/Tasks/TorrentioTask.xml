@@ -6,6 +6,6 @@
         <field id="mediaType" type="string" />
         <field id="season" type="integer" />
         <field id="episode" type="integer" />
-        <field id="sources" type="array" />
+        <field id="sources" type="array" alwaysNotify="true" />
     </interface>
 </component>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="PosterCard" extends="Group">
+    <interface>
+        <field id="itemContent" type="node" onChange="onContentChange" />
+    </interface>
+    <script type="text/brightscript" uri="pkg:/components/Items/PosterCard.brs" />
+    <children>
+        <Rectangle id="placeholder" width="180" height="240" color="0x1f1f1fff" />
+        <Poster id="poster" width="180" height="240" loadDisplayMode="scaleToFill" />
+        <Label id="title"
+            translation="[0,248]"
+            width="180"
+            height="48"
+            color="0xFFFFFFff"
+            wrap="true"
+            numLines="2"
+            horizAlign="center"
+            font="font:SmallSystemFont" />
+    </children>
+</component>

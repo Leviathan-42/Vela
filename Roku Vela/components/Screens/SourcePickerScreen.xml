@@ -9,8 +9,16 @@
         <field id="autoplay" type="boolean" />
     </interface>
     <children>
-        <Label id="header" translation="[80,40]" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" />
-        <BusySpinner id="loading" translation="[960,540]" control="start" />
-        <LabelList id="sourceList" translation="[80,120]" itemSize="[1760,80]" numColumns="1" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
+        <Label id="header" translation="[40,30]" color="0xFFFFFFff" font="font:LargeBoldSystemFont" />
+        <Label id="status" translation="[40,90]" color="0xAAAAAAff" width="1600" wrap="true" font="font:SmallSystemFont" />
+        <BusySpinner id="loading" translation="[820,440]" control="start" />
+        <LabelList
+            id="sourceList"
+            translation="[40,150]"
+            itemSize="[1600,72]"
+            color="0xCCCCCCff"
+            focusedColor="0x3B82F6ff"
+            drawFocusFeedback="true"
+            font="font:SmallSystemFont" />
     </children>
 </component>

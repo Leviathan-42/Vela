@@ -26,15 +26,21 @@ sub onMediaItemChanged()
     if item = invalid then return
     m.currentMedia = item
 
-    m.titleLabel.text = item.title
+    title = item.title
+    if title = invalid then title = ""
+    m.titleLabel.text = title
+
     year = ""
-    if item.releaseDate <> invalid and item.releaseDate.len() >= 4
+    if item.releaseDate <> invalid and item.releaseDate <> "" and item.releaseDate.len() >= 4
         year = item.releaseDate.left(4)
     end if
     rating = ""
-    if item.rating <> invalid then rating = " ★ " + item.rating
+    if item.rating <> invalid then rating = "  ★ " + item.rating
     m.metaLabel.text = year + rating
-    m.overviewLabel.text = item.overview
+
+    overview = item.overview
+    if overview = invalid then overview = ""
+    m.overviewLabel.text = overview
 
     if item.backdropUrl <> invalid
         m.backdrop.uri = item.backdropUrl
@@ -45,21 +51,20 @@ sub onMediaItemChanged()
         m.poster.uri = item.posterUrl
     end if
 
-    ' Update watchlist button text
     updateWatchlistButton()
 
-    ' Fetch external IDs to get IMDB id
-    task = CreateObject("roSGNode", "TMDbTask")
-    if item.mediaType = "tv"
-        task.endpoint = "/tv/" + item.id + "/external_ids"
-    else
-        task.endpoint = "/movie/" + item.id + "/external_ids"
+    if item.id <> invalid
+        task = CreateObject("roSGNode", "TMDbTask")
+        if item.mediaType = "tv"
+            task.endpoint = "/tv/" + item.id + "/external_ids"
+        else
+            task.endpoint = "/movie/" + item.id + "/external_ids"
+        end if
+        task.observeField("response", "onExternalIdsLoaded")
+        task.control = "RUN"
     end if
-    task.observeField("response", "onExternalIdsLoaded")
-    task.control = "RUN"
 
-    ' For TV, fetch seasons
-    if item.mediaType = "tv"
+    if item.mediaType = "tv" and item.id <> invalid
         m.seasonList.visible = true
         m.episodeList.visible = true
         fetchSeasons(item.id)
@@ -73,9 +78,10 @@ end sub
 
 sub updateWatchlistButton()
     btn = m.buttonGroup.getChild(2)
-    if m.currentMedia = invalid then return
+    if btn = invalid then return
+    if m.currentMedia = invalid or m.currentMedia.id = invalid then return
     if IsWatchlisted(m.currentMedia.id)
-        btn.text = "✓ Watchlisted"
+        btn.text = "Remove from Watchlist"
     else
         btn.text = "+ Watchlist"
     end if
@@ -103,16 +109,18 @@ sub onShowDetailsLoaded(event)
 
     m.seasonData = resp.seasons
     seasonContent = CreateObject("roSGNode", "ContentNode")
+    firstSeasonNum = invalid
     for each s in resp.seasons
-        if s.season_number = 0 then continue for ' skip specials for now
+        if s.season_number = invalid or s.season_number = 0 then continue for
         node = seasonContent.createChild("ContentNode")
         node.title = "S" + s.season_number.toStr()
         node.seasonNumber = s.season_number
+        if firstSeasonNum = invalid then firstSeasonNum = s.season_number
     end for
     m.seasonList.content = seasonContent
-    if m.seasonList.content.getChildCount() > 0
+    if m.seasonList.content.getChildCount() > 0 and firstSeasonNum <> invalid
         m.seasonList.jumpToItem = 0
-        fetchEpisodes(m.currentMedia.id, m.seasonData[0].season_number)
+        fetchEpisodes(m.currentMedia.id, firstSeasonNum)
     end if
 end sub
 
@@ -139,10 +147,13 @@ sub onEpisodesLoaded(event)
     m.episodeData = resp.episodes
     epContent = CreateObject("roSGNode", "ContentNode")
     for each ep in resp.episodes
+        if ep.episode_number = invalid then continue for
         node = epContent.createChild("ContentNode")
-        node.title = ep.episode_number.toStr() + ". " + ep.name
+        epName = ep.name
+        if epName = invalid then epName = ""
+        node.title = ep.episode_number.toStr() + ". " + epName
         node.episodeNumber = ep.episode_number
-        node.description = ep.overview
+        if ep.overview <> invalid then node.description = ep.overview
         if ep.still_path <> invalid
             node.hdPosterUrl = "https://image.tmdb.org/t/p/w300" + ep.still_path
         end if
@@ -172,14 +183,16 @@ sub onButtonSelected()
     else if idx = 1 ' Sources
         openSourcePicker(false)
     else if idx = 2 ' Watchlist
-        ToggleWatchlist(m.currentMedia.id)
-        updateWatchlistButton()
+        if m.currentMedia.id <> invalid
+            ToggleWatchlist(m.currentMedia.id)
+            updateWatchlistButton()
+        end if
     end if
 end sub
 
 sub openSourcePicker(autoplay as Boolean)
     if m.currentMedia.imdbId = invalid or m.currentMedia.imdbId = ""
-        ' Show error — need IMDB id for Torrentio
+        m.metaLabel.text = "Looking up IMDb id, please try again in a moment..."
         return
     end if
 

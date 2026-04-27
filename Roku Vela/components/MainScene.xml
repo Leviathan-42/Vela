@@ -8,25 +8,21 @@
         <field id="screenArgs" type="assocarray" />
     </interface>
     <children>
+        <Rectangle id="appBg" width="1920" height="1080" color="0x0a0a0aff" translation="[0,0]" />
         <Group id="tabBar" translation="[0,0]">
-            <Rectangle
-                id="tabBg"
-                width="1920"
-                height="80"
-                color="0x1a1a1aff" />
+            <Rectangle id="tabBg" width="240" height="1080" color="0x141414ff" />
+            <Rectangle id="tabAccent" width="4" height="1080" color="0x3B82F6ff" translation="[236,0]" />
+            <Label id="brand" text="VELA" translation="[24,28]" color="0x3B82F6ff" font="font:LargeBoldSystemFont" />
             <LabelList
                 id="tabs"
-                translation="[40,10]"
-                itemSize="[200,60]"
-                numColumns="1"
-                layoutDirection="horiz"
-                focusFootprintBlendColor="0x333333ff"
-                focusBlendColor="0xFF6B35ff"
-                color="0xFFFFFFFF"
+                translation="[24,120]"
+                itemSize="[212,72]"
+                color="0xBBBBBBff"
+                focusedColor="0xFFFFFFff"
+                drawFocusFeedback="true"
                 font="font:MediumBoldSystemFont"
-                focusedFont="font:MediumBoldSystemFont"
-                itemSpacing="[30,0]" />
+                focusedFont="font:MediumBoldSystemFont" />
         </Group>
-        <Group id="screenContainer" translation="[0,80]" />
+        <Group id="screenContainer" translation="[240,0]" />
     </children>
 </component>

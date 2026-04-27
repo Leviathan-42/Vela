@@ -3,26 +3,20 @@
     <script type="text/brightscript" uri="pkg:/source/utils.brs" />
     <script type="text/brightscript" uri="pkg:/components/Screens/SearchScreen.brs" />
     <children>
-        <Label
-            text="Search"
-            translation="[80,40]"
-            color="0xFFFFFFFF"
-            font="font:LargeBoldSystemFont" />
-        <Keyboard
-            id="keyboard"
-            translation="[80,120]"
-            width="1200"
-            height="400" />
-        <PosterGrid
+        <Label id="header" text="Search" translation="[40,30]" color="0xFFFFFFff" font="font:LargeBoldSystemFont" />
+        <Keyboard id="keyboard" translation="[40,110]" width="1200" height="380" />
+        <Label id="hint" text="Type at least 3 characters" translation="[40,510]" color="0x888888ff" font="font:SmallSystemFont" />
+        <MarkupGrid
             id="resultsGrid"
-            translation="[80,560]"
-            itemSize="[200,300]"
-            numColumns="6"
-            numRows="2"
-            itemSpacing="[20,20]" />
-        <BusySpinner
-            id="loading"
-            translation="[960,540]"
-            control="none" />
+            translation="[40,540]"
+            itemComponentName="PosterCard"
+            itemSize="[200,360]"
+            numColumns="7"
+            numRows="1"
+            itemSpacing="[20,20]"
+            vertFocusAnimationStyle="floatingFocus"
+            horizFocusAnimationStyle="floatingFocus"
+            drawFocusFeedback="true" />
+        <BusySpinner id="loading" translation="[820,400]" control="none" />
     </children>
 </component>

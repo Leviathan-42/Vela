@@ -6,10 +6,11 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import httpx
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
 from pydantic import BaseModel
 
 from .config import BASE_DIR, FFMPEG_PATH, HOST, PORT, SESSION_TTL_HOURS
@@ -66,6 +67,42 @@ class StreamResponse(BaseModel):
 async def health():
     ffmpeg_ok = shutil.which(FFMPEG_PATH) is not None
     return {"status": "ok", "ffmpeg": ffmpeg_ok}
+
+
+TORRENTIO_BASE = (
+    "https://torrentio.strem.fun/providers=yts,eztv,1337x,thepiratebay,rarbg"
+)
+
+
+@app.get("/sources")
+async def get_sources(
+    imdbId: str,
+    mediaType: str = "movie",
+    season: int | None = None,
+    episode: int | None = None,
+):
+    """Proxy a Torrentio sources query so Roku doesn't have to talk to
+    Cloudflare directly. Returns Torrentio's raw JSON."""
+    if mediaType == "tv":
+        if season is None or episode is None:
+            raise HTTPException(400, "season and episode required for tv")
+        url = f"{TORRENTIO_BASE}/stream/series/{imdbId}:{season}:{episode}.json"
+    else:
+        url = f"{TORRENTIO_BASE}/stream/movie/{imdbId}.json"
+
+    logger.info("Torrentio fetch: %s", url)
+    try:
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+            resp = await client.get(url)
+    except httpx.HTTPError as e:
+        logger.warning("Torrentio fetch failed: %s", e)
+        return JSONResponse({"streams": []})
+
+    if resp.status_code != 200:
+        logger.warning("Torrentio returned HTTP %s", resp.status_code)
+        return JSONResponse({"streams": []})
+
+    return JSONResponse(resp.json())
 
 
 @app.post("/stream", response_model=StreamResponse)

@@ -11,6 +11,7 @@
         <field id="episode" type="integer" />
     </interface>
     <children>
-        <Video id="video" translation="[0,0]" width="1920" height="1080" loop="false" notificationInterval="5" />
+        <Rectangle width="1920" height="1080" color="0x000000ff" translation="[-240,0]" />
+        <Video id="video" translation="[-240,0]" width="1920" height="1080" loop="false" notificationInterval="5" />
     </children>
 </component>

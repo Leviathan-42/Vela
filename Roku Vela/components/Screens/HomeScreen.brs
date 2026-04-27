@@ -1,45 +1,154 @@
-' HomeScreen - Trending / Popular / Continue Watching
+' HomeScreen - Netflix-style rows of content categories
 sub init()
-    m.menuList = m.top.findNode("menuList")
     m.contentGrid = m.top.findNode("contentGrid")
     m.loading = m.top.findNode("loading")
 
-    menuContent = CreateObject("roSGNode", "ContentNode")
-    items = ["Trending Movies", "Trending Shows", "Popular Movies", "Popular Shows", "Continue Watching", "Watchlist"]
-    for each item in items
-        node = menuContent.createChild("ContentNode")
-        node.title = item
+    m.contentGrid.observeField("rowItemSelected", "onItemSelected")
+
+    ' Build the empty row scaffold first so async fetches can fill into it
+    m.rowEndpoints = [
+        { title: "Trending Movies", endpoint: "/trending/movie/day" },
+        { title: "Trending Shows",  endpoint: "/trending/tv/day"   },
+        { title: "Popular Movies",  endpoint: "/movie/popular"     },
+        { title: "Popular Shows",   endpoint: "/tv/popular"        },
+        { title: "Watchlist",       endpoint: "watchlist"          }
+    ]
+
+    gridContent = CreateObject("roSGNode", "ContentNode")
+    for each row in m.rowEndpoints
+        rowNode = gridContent.createChild("ContentNode")
+        rowNode.title = row.title
     end for
-    m.menuList.content = menuContent
+    m.contentGrid.content = gridContent
 
-    m.menuList.observeField("itemFocused", "onMenuFocused")
-    m.contentGrid.observeField("itemSelected", "onItemSelected")
-
-    m.menuList.setFocus(true)
-    fetchTrendingMovies()
+    m.loading.control = "start"
+    m.pendingRows = 0
+    for i = 0 to m.rowEndpoints.count() - 1
+        ep = m.rowEndpoints[i]
+        if ep.endpoint = "watchlist"
+            loadWatchlistRow(i)
+        else
+            fetchCategory(i, ep.endpoint)
+        end if
+    end for
 end sub
 
-sub onMenuFocused()
-    idx = m.menuList.itemFocused
-    if idx = 0
-        fetchTrendingMovies()
-    else if idx = 1
-        fetchTrendingShows()
-    else if idx = 2
-        fetchPopularMovies()
-    else if idx = 3
-        fetchPopularShows()
-    else if idx = 4
-        loadContinueWatching()
-    else if idx = 5
-        loadWatchlist()
+sub fetchCategory(rowIdx as Integer, endpoint as String)
+    m.pendingRows = m.pendingRows + 1
+    task = CreateObject("roSGNode", "TMDbTask")
+    task.endpoint = endpoint
+    task.observeField("response", "onCategoryLoaded")
+    task.control = "RUN"
+end sub
+
+sub onCategoryLoaded(event)
+    task = event.getRoSGNode()
+    response = task.response
+    endpoint = task.endpoint
+
+    rowIdx = -1
+    for i = 0 to m.rowEndpoints.count() - 1
+        if m.rowEndpoints[i].endpoint = endpoint
+            rowIdx = i
+            exit for
+        end if
+    end for
+
+    decrementPending()
+    if rowIdx < 0 then return
+    if response = invalid or response.results = invalid then return
+    if m.contentGrid.content = invalid then return
+
+    row = m.contentGrid.content.getChild(rowIdx)
+    if row = invalid then return
+
+    for each item in response.results
+        node = row.createChild("ContentNode")
+        title = item.title
+        if title = invalid then title = item.name
+        if title = invalid then title = ""
+        node.title = title
+        if item.id <> invalid
+            node.id = item.id.toStr()
+            node.tmdbId = item.id.toStr()
+        end if
+        if item.poster_path <> invalid
+            node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
+        end if
+        if item.overview <> invalid then node.description = item.overview
+        if item.release_date <> invalid then node.releaseDate = item.release_date
+        if item.first_air_date <> invalid then node.releaseDate = item.first_air_date
+        if item.media_type <> invalid
+            node.mediaType = item.media_type
+        else if item.title <> invalid
+            node.mediaType = "movie"
+        else
+            node.mediaType = "tv"
+        end if
+        if item.vote_average <> invalid then node.rating = item.vote_average.toStr()
+        if item.runtime <> invalid then node.runtime = item.runtime
+        if item.backdrop_path <> invalid
+            node.backdropUrl = "https://image.tmdb.org/t/p/original" + item.backdrop_path
+        end if
+    end for
+end sub
+
+sub loadWatchlistRow(rowIdx as Integer)
+    ids = GetWatchlist()
+    if ids = invalid or ids.count() = 0 then return
+    m.watchlistRowIdx = rowIdx
+    for each id in ids
+        m.pendingRows = m.pendingRows + 1
+        task = CreateObject("roSGNode", "TMDbTask")
+        task.endpoint = "/movie/" + id
+        task.observeField("response", "onWatchlistItemLoaded")
+        task.control = "RUN"
+    end for
+end sub
+
+sub onWatchlistItemLoaded(event)
+    decrementPending()
+    task = event.getRoSGNode()
+    item = task.response
+    if item = invalid then return
+    if m.contentGrid.content = invalid then return
+    row = m.contentGrid.content.getChild(m.watchlistRowIdx)
+    if row = invalid then return
+    title = item.title
+    if title = invalid then title = item.name
+    if title = invalid then return
+
+    node = row.createChild("ContentNode")
+    node.title = title
+    if item.id <> invalid
+        node.id = item.id.toStr()
+        node.tmdbId = item.id.toStr()
+    end if
+    if item.poster_path <> invalid
+        node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
+    end if
+    if item.overview <> invalid then node.description = item.overview
+    if item.title <> invalid
+        node.mediaType = "movie"
+    else
+        node.mediaType = "tv"
     end if
 end sub
 
+sub decrementPending()
+    m.pendingRows = m.pendingRows - 1
+    if m.pendingRows <= 0 then m.loading.control = "stop"
+end sub
+
 sub onItemSelected()
-    idx = m.contentGrid.itemSelected
-    if idx < 0 then return
-    item = m.contentGrid.content.getChild(idx)
+    sel = m.contentGrid.rowItemSelected
+    if sel = invalid or sel.count() < 2 then return
+    rowIdx = sel[0]
+    colIdx = sel[1]
+    if m.contentGrid.content = invalid then return
+    row = m.contentGrid.content.getChild(rowIdx)
+    if row = invalid then return
+    item = row.getChild(colIdx)
     if item = invalid then return
 
     mediaItem = {
@@ -60,127 +169,6 @@ sub onItemSelected()
     m.top.getScene().pushScreen = "DetailScreen"
 end sub
 
-sub fetchTrendingMovies()
-    m.loading.control = "start"
-    task = CreateObject("roSGNode", "TMDbTask")
-    task.endpoint = "/trending/movie/day"
-    task.observeField("response", "onContentLoaded")
-    task.control = "RUN"
-end sub
-
-sub fetchTrendingShows()
-    m.loading.control = "start"
-    task = CreateObject("roSGNode", "TMDbTask")
-    task.endpoint = "/trending/tv/day"
-    task.observeField("response", "onContentLoaded")
-    task.control = "RUN"
-end sub
-
-sub fetchPopularMovies()
-    m.loading.control = "start"
-    task = CreateObject("roSGNode", "TMDbTask")
-    task.endpoint = "/movie/popular"
-    task.observeField("response", "onContentLoaded")
-    task.control = "RUN"
-end sub
-
-sub fetchPopularShows()
-    m.loading.control = "start"
-    task = CreateObject("roSGNode", "TMDbTask")
-    task.endpoint = "/tv/popular"
-    task.observeField("response", "onContentLoaded")
-    task.control = "RUN"
-end sub
-
-sub loadContinueWatching()
-    m.loading.control = "start"
-    ' Build from registry progress entries
-    gridContent = CreateObject("roSGNode", "ContentNode")
-    ' TODO: iterate registry keys starting with progress_
-    m.contentGrid.content = gridContent
-    m.loading.control = "stop"
-end sub
-
-sub loadWatchlist()
-    m.loading.control = "start"
-    watchlistIds = GetWatchlist()
-    if watchlistIds.count() = 0
-        m.loading.control = "stop"
-        m.contentGrid.content = CreateObject("roSGNode", "ContentNode")
-        return
-    end if
-    ' Fetch details for each watchlisted item
-    gridContent = CreateObject("roSGNode", "ContentNode")
-    for each id in watchlistIds
-        task = CreateObject("roSGNode", "TMDbTask")
-        task.endpoint = "/movie/" + id
-        task.observeField("response", "onWatchlistItemLoaded")
-        task.control = "RUN"
-    end for
-    m.contentGrid.content = gridContent
-    m.loading.control = "stop"
-end sub
-
-sub onContentLoaded(event)
-    m.loading.control = "stop"
-    task = event.getRoSGNode()
-    response = task.response
-    if response = invalid or response.results = invalid then return
-
-    gridContent = CreateObject("roSGNode", "ContentNode")
-    for each item in response.results
-        node = gridContent.createChild("ContentNode")
-        node.title = item.title
-        if item.title = invalid then node.title = item.name
-        node.id = item.id.toStr()
-        node.tmdbId = item.id.toStr()
-        node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
-        node.description = item.overview
-        node.releaseDate = item.release_date
-        if item.first_air_date <> invalid then node.releaseDate = item.first_air_date
-        node.mediaType = item.media_type
-        if item.media_type = invalid
-            if item.title <> invalid
-                node.mediaType = "movie"
-            else
-                node.mediaType = "tv"
-            end if
-        end if
-        node.rating = item.vote_average.toStr()
-        node.runtime = item.runtime
-        if item.backdrop_path <> invalid
-            node.backdropUrl = "https://image.tmdb.org/t/p/original" + item.backdrop_path
-        end if
-    end for
-    m.contentGrid.content = gridContent
-end sub
-
-sub onWatchlistItemLoaded(event)
-    task = event.getRoSGNode()
-    item = task.response
-    if item = invalid then return
-    grid = m.contentGrid
-    node = grid.content.createChild("ContentNode")
-    node.title = item.title
-    if item.title = invalid then node.title = item.name
-    node.id = item.id.toStr()
-    node.tmdbId = item.id.toStr()
-    node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
-    node.description = item.overview
-    node.releaseDate = item.release_date
-    if item.first_air_date <> invalid then node.releaseDate = item.first_air_date
-    node.mediaType = "movie"
-    if item.title = invalid then node.mediaType = "tv"
-end sub
-
 function onKeyEvent(key as String, press as Boolean) as Boolean
-    if press and key = "left" and m.contentGrid.hasFocus()
-        m.menuList.setFocus(true)
-        return true
-    end if
-    if press and key = "right" and m.menuList.hasFocus()
-        m.contentGrid.setFocus(true)
-        return true
-    end if
     return false
 end function

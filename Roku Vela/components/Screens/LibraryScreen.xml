@@ -3,8 +3,18 @@
     <script type="text/brightscript" uri="pkg:/source/utils.brs" />
     <script type="text/brightscript" uri="pkg:/components/Screens/LibraryScreen.brs" />
     <children>
-        <Label text="Library" translation="[80,40]" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" />
-        <Label id="emptyLabel" text="Watchlist is empty" translation="[80,120]" color="0x888888FF" font="font:MediumSystemFont" visible="false" />
-        <PosterGrid id="grid" translation="[80,120]" itemSize="[200,300]" numColumns="6" numRows="3" itemSpacing="[20,20]" />
+        <Label id="header" text="Library" translation="[40,30]" color="0xFFFFFFff" font="font:LargeBoldSystemFont" />
+        <Label id="emptyLabel" text="Your watchlist is empty. Add titles from the Detail screen." translation="[40,140]" color="0x888888ff" font="font:MediumSystemFont" visible="false" />
+        <MarkupGrid
+            id="grid"
+            translation="[40,140]"
+            itemComponentName="PosterCard"
+            itemSize="[200,360]"
+            numColumns="7"
+            numRows="2"
+            itemSpacing="[20,30]"
+            vertFocusAnimationStyle="floatingFocus"
+            horizFocusAnimationStyle="floatingFocus"
+            drawFocusFeedback="true" />
     </children>
 </component>

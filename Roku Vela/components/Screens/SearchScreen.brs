@@ -11,13 +11,14 @@ end sub
 
 sub onSearchTextChanged()
     text = m.keyboard.textEditBox.text
-    if text.len() < 3 then return
+    if text = invalid or text.len() < 3 then return
 
     m.loading.control = "start"
     if m.searchTask <> invalid then m.searchTask.control = "STOP"
 
+    encoded = CreateObject("roUrlTransfer").escape(text)
     m.searchTask = CreateObject("roSGNode", "TMDbTask")
-    m.searchTask.endpoint = "/search/multi?query=" + text
+    m.searchTask.endpoint = "/search/multi?query=" + encoded
     m.searchTask.observeField("response", "onResultsLoaded")
     m.searchTask.control = "RUN"
 end sub
@@ -32,18 +33,22 @@ sub onResultsLoaded(event)
     for each item in response.results
         if item.media_type <> "movie" and item.media_type <> "tv" then continue for
         node = gridContent.createChild("ContentNode")
-        node.title = item.title
-        if item.title = invalid then node.title = item.name
-        node.id = item.id.toStr()
-        node.tmdbId = item.id.toStr()
+        title = item.title
+        if title = invalid then title = item.name
+        if title = invalid then title = ""
+        node.title = title
+        if item.id <> invalid
+            node.id = item.id.toStr()
+            node.tmdbId = item.id.toStr()
+        end if
         if item.poster_path <> invalid
             node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
         end if
-        node.description = item.overview
-        node.releaseDate = item.release_date
+        if item.overview <> invalid then node.description = item.overview
+        if item.release_date <> invalid then node.releaseDate = item.release_date
         if item.first_air_date <> invalid then node.releaseDate = item.first_air_date
         node.mediaType = item.media_type
-        node.rating = item.vote_average.toStr()
+        if item.vote_average <> invalid then node.rating = item.vote_average.toStr()
     end for
     m.resultsGrid.content = gridContent
 end sub

@@ -8,7 +8,7 @@ end sub
 
 sub loadWatchlist()
     ids = GetWatchlist()
-    if ids.count() = 0
+    if ids = invalid or ids.count() = 0
         m.emptyLabel.visible = true
         m.grid.visible = false
         return
@@ -16,38 +16,41 @@ sub loadWatchlist()
     m.emptyLabel.visible = false
     m.grid.visible = true
 
-    content = CreateObject("roSGNode", "ContentNode")
+    ' Set the grid content first so onItemLoaded can append into it
+    m.grid.content = CreateObject("roSGNode", "ContentNode")
     for each id in ids
         task = CreateObject("roSGNode", "TMDbTask")
-        ' Try movie first, then TV
         task.endpoint = "/movie/" + id
         task.observeField("response", "onItemLoaded")
         task.control = "RUN"
     end for
-    m.grid.content = content
 end sub
 
 sub onItemLoaded(event)
     task = event.getRoSGNode()
     item = task.response
-    if item = invalid
-        ' Try TV
-        ' TODO: handle TV shows in watchlist
-        return
-    end if
+    if item = invalid then return
+    if m.grid.content = invalid then return
 
-    grid = m.grid
-    node = grid.content.createChild("ContentNode")
-    node.title = item.title
-    if item.title = invalid then node.title = item.name
-    node.id = item.id.toStr()
-    node.tmdbId = item.id.toStr()
+    title = item.title
+    if title = invalid then title = item.name
+    if title = invalid then return ' skip — not a usable result
+
+    node = m.grid.content.createChild("ContentNode")
+    node.title = title
+    if item.id <> invalid
+        node.id = item.id.toStr()
+        node.tmdbId = item.id.toStr()
+    end if
     if item.poster_path <> invalid
         node.hdPosterUrl = "https://image.tmdb.org/t/p/w500" + item.poster_path
     end if
-    node.description = item.overview
-    node.mediaType = "movie"
-    if item.title = invalid then node.mediaType = "tv"
+    if item.overview <> invalid then node.description = item.overview
+    if item.title <> invalid
+        node.mediaType = "movie"
+    else
+        node.mediaType = "tv"
+    end if
 end sub
 
 sub onItemSelected()

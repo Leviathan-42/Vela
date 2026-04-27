@@ -3,8 +3,24 @@
     <script type="text/brightscript" uri="pkg:/source/utils.brs" />
     <script type="text/brightscript" uri="pkg:/components/Screens/SettingsScreen.brs" />
     <children>
-        <Label text="Settings" translation="[80,40]" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" />
-        <LabelList id="menu" translation="[80,120]" itemSize="[800,80]" numColumns="1" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
-        <Label id="statusLabel" translation="[80,600]" width="1600" height="200" color="0xAAAAAAFF" font="font:SmallSystemFont" wrap="true" />
+        <Label id="header" text="Settings" translation="[40,30]" color="0xFFFFFFff" font="font:LargeBoldSystemFont" />
+        <LabelList
+            id="menu"
+            translation="[40,120]"
+            itemSize="[800,72]"
+            color="0xCCCCCCff"
+            focusedColor="0x3B82F6ff"
+            drawFocusFeedback="true"
+            font="font:MediumSystemFont"
+            focusedFont="font:MediumBoldSystemFont" />
+        <Label
+            id="statusLabel"
+            translation="[40,560]"
+            width="1600"
+            height="240"
+            color="0xAAAAAAff"
+            wrap="true"
+            numLines="6"
+            font="font:SmallSystemFont" />
     </children>
 </component>
