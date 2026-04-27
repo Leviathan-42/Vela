@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="RDAuthTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/components/Tasks/RDAuthTask.brs" />
+    <interface>
+        <field id="deviceCode" type="string" />
+        <field id="tokens" type="assocarray" />
+        <field id="error" type="string" />
+    </interface>
+</component>

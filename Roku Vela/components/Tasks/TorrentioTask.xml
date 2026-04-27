@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="TorrentioTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/components/Tasks/TorrentioTask.brs" />
+    <interface>
+        <field id="imdbId" type="string" />
+        <field id="mediaType" type="string" />
+        <field id="season" type="integer" />
+        <field id="episode" type="integer" />
+        <field id="sources" type="array" />
+    </interface>
+</component>

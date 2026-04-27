@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="LibraryScreen" extends="Group">
+    <script type="text/brightscript" uri="pkg:/source/utils.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Screens/LibraryScreen.brs" />
+    <children>
+        <Label text="Library" translation="[80,40]" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" />
+        <Label id="emptyLabel" text="Watchlist is empty" translation="[80,120]" color="0x888888FF" font="font:MediumSystemFont" visible="false" />
+        <PosterGrid id="grid" translation="[80,120]" itemSize="[200,300]" numColumns="6" numRows="3" itemSpacing="[20,20]" />
+    </children>
+</component>

@@ -1,75 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <component name="DetailScreen" extends="Group">
+    <script type="text/brightscript" uri="pkg:/source/utils.brs" />
     <script type="text/brightscript" uri="pkg:/components/Screens/DetailScreen.brs" />
     <interface>
         <field id="mediaItem" type="assocarray" />
     </interface>
     <children>
-        <Poster
-            id="backdrop"
-            width="1920"
-            height="1080"
-            loadSync="false"
-            loadingBitmapUri="pkg:/images/loader.png" />
-
-        <Rectangle
-            width="1920"
-            height="1080"
-            color="0x00000088"
-            translation="[0,0]" />
-
-        <Poster
-            id="poster"
-            translation="[80,280]"
-            width="300"
-            height="450" />
-
-        <Label
-            id="titleLabel"
-            translation="[420,300]"
-            width="1400"
-            height="80"
-            color="0xFFFFFFFF"
-            font="font:LargeBoldSystemFont"
-            wrap="false" />
-
-        <Label
-            id="metaLabel"
-            translation="[420,390]"
-            width="1400"
-            height="40"
-            color="0xAAAAAAFF"
-            font="font:SmallSystemFont" />
-
-        <Label
-            id="overviewLabel"
-            translation="[420,450]"
-            width="1400"
-            height="300"
-            color="0xCCCCCCFF"
-            font="font:SmallSystemFont"
-            wrap="true"
-            numLines="8" />
-
-        <ButtonGroup
-            id="buttonGroup"
-            translation="[420,780]"
-            layoutDirection="horiz"
-            itemSpacings="[30]">
-            <Button
-                id="playButton"
-                text="Play"
-                minWidth="200"
-                focusedIconUri="pkg:/images/play_focus.png"
-                iconUri="pkg:/images/play.png" />
-            <Button
-                id="sourceButton"
-                text="Sources"
-                minWidth="200" />
-            <Button
-                id="watchlistButton"
-                text="+ Watchlist"
-                minWidth="250" />
+        <Poster id="backdrop" width="1920" height="1080" loadSync="false" />
+        <Rectangle width="1920" height="1080" color="0x00000088" translation="[0,0]" />
+        <Poster id="poster" translation="[80,200]" width="300" height="450" />
+        <Label id="titleLabel" translation="[420,220]" width="1400" height="80" color="0xFFFFFFFF" font="font:LargeBoldSystemFont" wrap="false" />
+        <Label id="metaLabel" translation="[420,310]" width="1400" height="40" color="0xAAAAAAFF" font="font:SmallSystemFont" />
+        <Label id="overviewLabel" translation="[420,370]" width="1400" height="200" color="0xCCCCCCFF" font="font:SmallSystemFont" wrap="true" numLines="6" />
+        <ButtonGroup id="buttonGroup" translation="[420,600]" layoutDirection="horiz" itemSpacings="[30]">
+            <Button id="playButton" text="▶ Play" minWidth="200" />
+            <Button id="sourceButton" text="Sources" minWidth="200" />
+            <Button id="watchlistButton" text="+ Watchlist" minWidth="250" />
         </ButtonGroup>
+        <LabelList id="seasonList" translation="[420,700]" itemSize="[120,60]" numColumns="1" layoutDirection="horiz" visible="false" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
+        <LabelList id="episodeList" translation="[420,780]" itemSize="[800,60]" numColumns="1" visible="false" focusBlendColor="0xFF6B35ff" color="0xFFFFFFFF" />
     </children>
 </component>

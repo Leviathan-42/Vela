@@ -1,16 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <component name="MainScene" extends="Scene">
+    <script type="text/brightscript" uri="pkg:/source/utils.brs" />
     <script type="text/brightscript" uri="pkg:/components/MainScene.brs" />
+    <interface>
+        <field id="pushScreen" type="string" />
+        <field id="popScreen" type="boolean" />
+        <field id="screenArgs" type="assocarray" />
+    </interface>
     <children>
-        <Overhang
-            id="overhang"
-            title="Vela"
-            showOptions="true"
-            showClock="true"
-            color="0x1a1a1aff" />
-        
-        <PanelSet
-            id="panelSet"
-            translation="[0,80]" />
+        <Group id="tabBar" translation="[0,0]">
+            <Rectangle
+                id="tabBg"
+                width="1920"
+                height="80"
+                color="0x1a1a1aff" />
+            <LabelList
+                id="tabs"
+                translation="[40,10]"
+                itemSize="[200,60]"
+                numColumns="1"
+                layoutDirection="horiz"
+                focusFootprintBlendColor="0x333333ff"
+                focusBlendColor="0xFF6B35ff"
+                color="0xFFFFFFFF"
+                font="font:MediumBoldSystemFont"
+                focusedFont="font:MediumBoldSystemFont"
+                itemSpacing="[30,0]" />
+        </Group>
+        <Group id="screenContainer" translation="[0,80]" />
     </children>
 </component>

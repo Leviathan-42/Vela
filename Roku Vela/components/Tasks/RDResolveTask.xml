@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="RDResolveTask" extends="Task">
+    <script type="text/brightscript" uri="pkg:/source/utils.brs" />
+    <script type="text/brightscript" uri="pkg:/components/Tasks/RDResolveTask.brs" />
+    <interface>
+        <field id="magnet" type="string" />
+        <field id="fileIndex" type="integer" />
+        <field id="result" type="assocarray" />
+        <field id="error" type="string" />
+    </interface>
+</component>
