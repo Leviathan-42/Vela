@@ -2,8 +2,8 @@ import SwiftUI
 
 struct PosterCard: View {
     let item: MediaItem
-    var width: CGFloat = 120
-    var height: CGFloat = 180
+    var width: CGFloat = Theme.Size.posterWidth
+    var height: CGFloat = Theme.Size.posterHeight
 
     var body: some View {
         AsyncImage(url: item.posterURL) { phase in
