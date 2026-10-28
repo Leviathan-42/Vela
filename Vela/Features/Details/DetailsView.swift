@@ -94,8 +94,10 @@ struct DetailsView: View {
             }
             .padding(.bottom, 32)
         }
+        #if os(iOS)
         .navigationTitle(displayed.title)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .background(Theme.background)
         .task {
             try? deps.library.touch(mediaId: media.id)
@@ -137,14 +139,14 @@ struct DetailsView: View {
                 Rectangle().fill(Theme.surface)
             }
         }
-        .frame(height: 220)
+        .frame(height: Theme.Size.backdropHeight)
         .clipped()
         .overlay(alignment: .bottom) {
             LinearGradient(
                 colors: [.clear, Theme.background],
                 startPoint: .top, endPoint: .bottom
             )
-            .frame(height: 80)
+            .frame(height: Theme.Size.backdropHeight * 0.4)
         }
     }
 
@@ -215,7 +217,9 @@ struct DetailsView: View {
                     Text(season.title).tag(season.seasonNumber)
                 }
             }
+            #if os(iOS)
             .pickerStyle(.menu)
+            #endif
             .padding(.horizontal)
         }
 
@@ -244,7 +248,7 @@ struct DetailsView: View {
                         Rectangle().fill(Theme.surface)
                     }
                 }
-                .frame(width: 120, height: 68)
+                .frame(width: Theme.Size.episodeStillWidth, height: Theme.Size.episodeStillHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -268,7 +272,7 @@ struct DetailsView: View {
             .padding(10)
             .background(Theme.surface, in: RoundedRectangle(cornerRadius: 10))
         }
-        .buttonStyle(.plain)
+        .tvFocusCard()
         .disabled(vm.imdbId == nil)
     }
 

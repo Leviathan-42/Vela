@@ -38,6 +38,30 @@ struct SearchView: View {
             } else if model.results.isEmpty && !model.isLoading {
                 ContentUnavailableView.search(text: model.query)
             } else {
+                #if os(tvOS)
+                ScrollView {
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: Theme.Size.posterWidth), spacing: Theme.Spacing.cardGap)],
+                        spacing: Theme.Spacing.rowGap
+                    ) {
+                        ForEach(model.results) { item in
+                            NavigationLink(value: item) {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    PosterCard(item: item)
+                                    Text(item.title)
+                                        .font(.headline)
+                                        .lineLimit(1)
+                                    Text(item.mediaType == .movie ? "Movie" : "TV Show")
+                                        .font(.caption).foregroundStyle(Theme.subtle)
+                                }
+                                .frame(width: Theme.Size.posterWidth, alignment: .leading)
+                            }
+                            .tvFocusCard()
+                        }
+                    }
+                    .padding(Theme.Spacing.edge)
+                }
+                #else
                 List(model.results) { item in
                     NavigationLink(value: item) {
                         HStack(spacing: 12) {
@@ -51,13 +75,16 @@ struct SearchView: View {
                     }
                 }
                 .listStyle(.plain)
+                #endif
             }
         }
         .searchable(text: $model.query, prompt: "Search movies and shows")
         .onChange(of: model.query) { _, _ in
             model.search(using: deps.tmdb)
         }
+        #if os(iOS)
         .navigationTitle("Search")
+        #endif
         .navigationDestination(for: MediaItem.self) { item in
             DetailsView(media: item)
         }

@@ -9,7 +9,7 @@ struct LibraryView: View {
         order: .reverse
     ) private var items: [LibraryItem]
 
-    private let columns = [GridItem(.adaptive(minimum: 110), spacing: 12)]
+    private let columns = [GridItem(.adaptive(minimum: Theme.Size.libraryGridMin), spacing: Theme.Spacing.cardGap)]
 
     var body: some View {
         Group {
@@ -21,19 +21,21 @@ struct LibraryView: View {
                 )
             } else {
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: Theme.Spacing.rowGap) {
                         ForEach(items) { item in
                             NavigationLink(value: item) {
                                 LibraryCard(item: item)
                             }
-                            .buttonStyle(.plain)
+                            .tvFocusCard()
                         }
                     }
-                    .padding()
+                    .padding(Theme.Spacing.edge)
                 }
             }
         }
+        #if os(iOS)
         .navigationTitle("Library")
+        #endif
         .background(Theme.background)
         .navigationDestination(for: LibraryItem.self) { item in
             DetailsView(media: item.asMediaItem())

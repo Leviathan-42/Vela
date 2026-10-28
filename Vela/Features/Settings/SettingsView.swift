@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @MainActor
 @Observable
@@ -100,7 +102,9 @@ struct SettingsView: View {
                 LabeledContent("Torrentio", value: "torrentio.strem.fun")
             }
         }
+        #if os(iOS)
         .navigationTitle("Settings")
+        #endif
         .task {
             await vm.refresh(using: deps.realDebrid)
         }
@@ -119,12 +123,14 @@ struct SettingsView: View {
                     .padding(8)
                     .frame(maxWidth: .infinity)
                     .background(Theme.surface, in: RoundedRectangle(cornerRadius: 8))
+                #if os(iOS)
                 Button {
                     UIPasteboard.general.string = code.userCode
                 } label: {
                     Image(systemName: "doc.on.doc")
                 }
                 .buttonStyle(.bordered)
+                #endif
             }
             Link(destination: code.verificationURL) {
                 Label(code.verificationURL.absoluteString, systemImage: "arrow.up.right.square")

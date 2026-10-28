@@ -56,7 +56,9 @@ struct HomeView: View {
             }
             .padding(.vertical)
         }
+        #if os(iOS)
         .navigationTitle("Vela")
+        #endif
         .background(Theme.background)
         .navigationDestination(for: MediaItem.self) { item in
             DetailsView(media: item)
@@ -78,7 +80,7 @@ struct HomeView: View {
                         NavigationLink(value: item.asMediaItem()) {
                             ContinueWatchingCard(item: item)
                         }
-                        .buttonStyle(.plain)
+                        .tvFocusCard()
                     }
                 }
                 .padding(.horizontal)
@@ -96,14 +98,14 @@ struct HomeView: View {
                         ForEach(0..<6, id: \.self) { _ in
                             RoundedRectangle(cornerRadius: Theme.Radius.card)
                                 .fill(Theme.surface)
-                                .frame(width: 120, height: 180)
+                                .frame(width: Theme.Size.posterWidth, height: Theme.Size.posterHeight)
                         }
                     } else {
                         ForEach(items) { item in
                             NavigationLink(value: item) {
                                 PosterCard(item: item)
                             }
-                            .buttonStyle(.plain)
+                            .tvFocusCard()
                         }
                     }
                 }
@@ -137,7 +139,7 @@ private struct ContinueWatchingCard: View {
                         Rectangle().fill(Theme.surface)
                     }
                 }
-                .frame(width: 160, height: 90)
+                .frame(width: Theme.Size.cwWidth, height: Theme.Size.cwHeight)
                 .clipped()
 
                 GeometryReader { geo in
@@ -148,7 +150,7 @@ private struct ContinueWatchingCard: View {
                 }
                 .frame(height: 3)
             }
-            .frame(width: 160, height: 90)
+            .frame(width: Theme.Size.cwWidth, height: Theme.Size.cwHeight)
             .clipShape(RoundedRectangle(cornerRadius: Theme.Radius.card))
 
             Text(item.title).font(.caption.weight(.semibold)).lineLimit(1)
@@ -158,7 +160,7 @@ private struct ContinueWatchingCard: View {
                 Text(timeRemainingText).font(.caption2).foregroundStyle(Theme.subtle)
             }
         }
-        .frame(width: 160)
+        .frame(width: Theme.Size.cwWidth)
     }
 
     private var timeRemainingText: String {
